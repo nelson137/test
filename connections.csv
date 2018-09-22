@@ -1,0 +1,5 @@
+name,username@internal_ip,username@external_ip
+pop,nelson@192.168.2.2,
+aws,,nelson@35.162.200.222
+pi,nelson@192.168.2.3,nelson@24.182.191.122
+mizzou,,nwewnh@tc.rnet.missouri.edu
