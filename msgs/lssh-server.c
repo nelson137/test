@@ -1,14 +1,13 @@
 #define _GNU_SOURCE
-#include <math.h>    // log10()
-#include <stdarg.h>  // va_list, va_start(), va_arg(), va_end()
-#include <stdio.h>   // printf()
-#include <stdlib.h>  // exit()
-#include <string.h>  // memset()
-#include <time.h>    // time_t, tm, localtime_r()
 
-#include <arpa/inet.h>  // socklen_t, socket(), AF_INET, SOCK_DGRAM, htonl(),
-                        // INADDR_ANY, htons(), bind(), recvfrom(),
-                        // inet_ntoa(), ntohs
+#include <math.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#include <arpa/inet.h>
 
 #define SERVER_PORT 1500
 #define MAX_MSG_LEN 100

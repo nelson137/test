@@ -1,10 +1,10 @@
 #define _DEFAULT_SOURCE
 
-#include <netdb.h>   // hostent
-#include <stdio.h>   // printf(), perror()
-#include <stdlib.h>  // malloc(), exit()
-#include <string.h>  // memset()
-#include <unistd.h>  // close(), gethostname()
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define SERVER_ADDRESS "255.255.255.255"
 #define SERVER_PORT    1500
