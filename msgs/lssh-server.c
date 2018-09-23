@@ -14,14 +14,8 @@
 
 
 void logger(char *severity, char *fmt, ...) {
-    // Print the current date and time
-    time_t t = time(NULL);
-    struct tm lt = {0};
-    localtime_r(&t, &lt);
-    printf("%d-%02d-%02d %02d:%02d:%02d %s [%s] ",
-           lt.tm_year+1900, lt.tm_mon+1, lt.tm_mday,      // Date
-           lt.tm_hour, lt.tm_min, lt.tm_sec, lt.tm_zone,  // Time
-           severity);                                     // Tag
+    // Print the message's severity
+    printf("[%s] ", severity);
 
     va_list args;
     va_start(args, fmt);
