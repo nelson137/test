@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 
+#include <ctype.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -20,8 +21,9 @@ void logger(char *severity, char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
+    // Print the message, replacing format specifiers with va_args
     while(*fmt != '\0') {
-        if (*fmt == '%' && *(fmt+1) != '\0') {
+        if (*fmt == '%' && *(fmt+1) != '\0' && isalpha(*(fmt+1))) {
             fmt++;
             switch (*fmt) {
                 case 'd':
