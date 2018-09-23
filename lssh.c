@@ -1,12 +1,13 @@
 #define _DEFAULT_SOURCE
-#include <stdio.h>      // FILE, fprintf, fgets, fopen, fclose, stderr
-#include <stdlib.h>     // exit, strtol, malloc, realloc, free
-#include <string.h>     // strlen, strsep, strcmp, strtok_r
-#include <unistd.h>     // execl
 
-#include <arpa/inet.h>  // inte_ntoa
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-#include <mylib.h>      // listbox
+#include <arpa/inet.h>
+
+#include <mylib.h>
 
 
 char *getDefaultGateway(void) {
