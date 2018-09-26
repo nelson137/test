@@ -27,7 +27,7 @@ char *getDefaultGateway(void) {
                 char *pEnd;
                 // Convert gw to an int
                 int ng = strtol(gw, &pEnd, 16);
-                // Convert the bits to dotted-decimal notation
+                // Convert the gw bits to dotted-decimal notation
                 struct in_addr addr;
                 addr.s_addr = ng;
                 gateway = inet_ntoa(addr);
@@ -136,17 +136,22 @@ int main (void) {
         ext_ips[i] = strsep(&str, ",");
     }
 
+    // Run listbox with each hostname as a choice
     int choice = listbox(1, "Connect:", names, nl, "*");
     if (choice == -1)
         return 1;
 
     char *host;
     if (strcmp(int_ips[choice], "") == 0) {
+        // There is no internal ip
         host = ext_ips[choice];
     } else if (strcmp(ext_ips[choice], "" ) == 0) {
+        // There is no external ip
         host = int_ips[choice];
     } else {
+        // There is both an internal and external ip
         puts("");
+        // Run listbox with internal and external as choices
         char *choices[2] = {"Internal", "External"};
         char *values[2] = {int_ips[choice], ext_ips[choice]};
         int choice2 = listbox(0, "Host Location:", choices, 2, "*");
@@ -160,7 +165,7 @@ int main (void) {
         free(lines[nl]);
     free(lines);
 
-    // Try to ssh to the chosen IP/domain name
+    // Try to ssh to the chosen host
     attempt_ssh(host);
 
     return 0;
