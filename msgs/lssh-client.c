@@ -16,7 +16,7 @@ char *getHostname(void) {
     while (gethostname(hn, hn_size) < 0) {
         hn_size *= 2;
         if (hn_size > 512) {
-            puts("hostname is too big");
+            puts("hostname is too long");
             exit(1);
         }
         hn = (char*) realloc(hn, sizeof(char) * hn_size);
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
            h->h_addr_list[0], h->h_length);
     serverAddr.sin_port = htons(SERVER_PORT);
 
-    // Create socket
+    // Create the socket
     int sock = socket(AF_INET,SOCK_DGRAM, 0);
     if (sock < 0) {
         printf("%s: cannot open socket\n", argv[0]);
