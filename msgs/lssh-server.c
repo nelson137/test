@@ -5,11 +5,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <arpa/inet.h>
 
 #define SERVER_PORT 1500
 #define MAX_MSG_LEN 100
+
+
+char *CWD = NULL;
+char *CONF_FN = NULL;
+char *CONF_LOCK_FN = NULL;
+
+
+void err(char *msg, int code) {
+    fprintf(stderr, "%s", msg);
+    exit(code);
+}
+
+
+// Get current working directory
+char *get_cwd(void) {
+    int cwd_size = 100;
+    char *cwd = malloc(sizeof(char*) * cwd_size);
+    while (getcwd(cwd, cwd_size-1) == NULL) {
+        cwd_size *= 2;
+        cwd = realloc(cwd, cwd_size);
+    }
+
+    return cwd;
+}
+
+
+char *path_join(char *first, char* delim, char *second) {
+    int size = strlen(first) + strlen(delim) + strlen(second) + 1;
+    char *joined = malloc(sizeof(char) * size);
+    sprintf(joined, "%s%s%s", first, delim, second);
+    return joined;
+}
+
+
+void update_conf(char *host, char *key, char *new_val) {
+    // Create the temp file
+    char tempfn[] = "/tmp/lssh-server.XXXXXX";
+    int tempfd = mkstemp(tempfn);
+
+    // Create a string of the command to be executed
+    int size = 24 + strlen(host) + strlen(key) + strlen(new_val) + \
+               strlen(CONF_FN) + strlen(tempfn);
+    char *cmd_s = malloc(sizeof(char) * size);
+    char *cmd_s_fmt = "jq -r '.\"%s\".\"%s\" = \"%s\"' %s > %s";
+    sprintf(cmd_s, cmd_s_fmt, host, key, new_val, CONF_FN, tempfn);
+
+    // Execute the command
+    FILE *cmd = popen(cmd_s, "r");
+    if (cmd == NULL)
+        err("Failed to run jq to update the conf file\n", 1);
+
+    pclose(cmd);
+
+    // Close the temp file
+    close(tempfd);
+
+    // Rename the temp file to connections.json
+    char *new_name = path_join(CWD, "/", "connections.json");
+    if (rename(tempfn, new_name) == -1)
+        err("Could not rename", 1);
+}
 
 
 void logger(char *severity, char *fmt, ...) {
@@ -47,7 +109,24 @@ void logger(char *severity, char *fmt, ...) {
 }
 
 
+void setup(void) {
+    CWD = get_cwd();
+    if (CWD == NULL)
+        err("Could not get current working directory\n", 1);
+
+    CONF_FN = path_join(CWD, "/", "connections.json");
+    if (CONF_FN == NULL)
+        err("Could not get path of conf file\n", 1);
+
+    CONF_LOCK_FN = path_join(CONF_FN, ".", "lock");
+    if (CONF_LOCK_FN == NULL)
+        err("Could not get path of conf lock file\n", 1);
+}
+
+
 int main(void) {
+    setup();
+
     int ret;
     int broadcast = 1;
 
@@ -99,7 +178,8 @@ int main(void) {
 
         // Log received message
         char *ip = inet_ntoa(clientAddr.sin_addr);
-        logger("INFO", "received message from %s: %s\n", ip, msg);
+        logger("INFO", "%s new internal ip: %s\n", msg, ip);
+        update_conf(msg, "internal_ip", ip);
     }
 
     return 0;
