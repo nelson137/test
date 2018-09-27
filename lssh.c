@@ -10,7 +10,7 @@
 #include <mylib.h>
 
 
-char *getDefaultGateway(void) {
+char *get_default_gateway(void) {
     FILE *f;
     char line[100], *iface, *dest, *gw, *end;
     char *gateway = NULL;
@@ -42,7 +42,7 @@ char *getDefaultGateway(void) {
 
 
 void attempt_ssh(char *host) {
-    char *gateway = getDefaultGateway();
+    char *gateway = get_default_gateway();
     printf("default gateway: %s\n", gateway);
     // Execute the ssh command
     execl("/usr/bin/ssh", "ssh", host, (char*)NULL);
