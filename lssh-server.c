@@ -46,16 +46,12 @@ char *path_join(char *first, char* delim, char *second) {
 
 
 void update_conf(char *host, char *key, char *new_val) {
-    // Create the temp file
-    char tempfn[] = "/tmp/lssh-server.XXXXXX";
-    int tempfd = mkstemp(tempfn);
-
     // Create a string of the command to be executed
-    int size = 24 + strlen(host) + strlen(key) + strlen(new_val) + \
-               strlen(CONF_FN) + strlen(tempfn);
+    int size = 31 + strlen(host) + strlen(key) + strlen(new_val) + \
+               2*strlen(CONF_FN);
     char *cmd_s = malloc(sizeof(char) * size);
-    char *cmd_s_fmt = "jq -r '.\"%s\".\"%s\" = \"%s\"' %s > %s";
-    sprintf(cmd_s, cmd_s_fmt, host, key, new_val, CONF_FN, tempfn);
+    char *cmd_s_fmt = "jq -r '.\"%s\".\"%s\" = \"%s\"' %s | sponge %s";
+    sprintf(cmd_s, cmd_s_fmt, host, key, new_val, CONF_FN, CONF_FN);
 
     // Execute the command
     FILE *cmd = popen(cmd_s, "r");
@@ -63,14 +59,6 @@ void update_conf(char *host, char *key, char *new_val) {
         err("Failed to run jq to update the conf file\n", 1);
 
     pclose(cmd);
-
-    // Close the temp file
-    close(tempfd);
-
-    // Rename the temp file to connections.json
-    char *new_name = path_join(CWD, "/", "connections.json");
-    if (rename(tempfn, new_name) == -1)
-        err("Could not rename", 1);
 }
 
 
