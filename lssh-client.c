@@ -10,7 +10,7 @@
 #define SERVER_PORT    1500
 
 
-char *getHostname(void) {
+char *get_hostname(void) {
     int hn_size = 32;
     char *hn = malloc(sizeof(char) * hn_size);
     while (gethostname(hn, hn_size) < 0) {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Send message
-    char *msg = getHostname();
+    char *msg = get_hostname();
     ret = sendto(sock, msg, strlen(msg)+1, 0,
                  (struct sockaddr*) &serverAddr,
                  sizeof(serverAddr));
