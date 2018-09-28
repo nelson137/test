@@ -6,13 +6,27 @@
 #include <unistd.h>
 
 #include <arpa/inet.h>
+#include <sys/wait.h>
 
 #include <mylib.h>
 
 
 void attempt_ssh(char *host) {
-    // Execute the ssh command
-    execl("/usr/bin/ssh", "ssh", host, (char*)NULL);
+    int ret;
+    int pid = fork();
+    if (pid < 0) {
+        // fork() failed
+        perror("fork failure");
+        exit(1);
+    } else if (pid == 0) {
+        // Executes in child process
+        execl("/usr/bin/ssh", "ssh", "-o", "ConnectTimeout=5", host, (char*)NULL);
+        _exit(1);
+    } else {
+        // Executes in parent process
+        // Wait for exec to complete
+        wait(&ret);
+    }
 }
 
 
