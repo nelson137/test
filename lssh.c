@@ -10,40 +10,7 @@
 #include <mylib.h>
 
 
-char *get_default_gateway(void) {
-    FILE *f;
-    char line[100], *iface, *dest, *gw, *end;
-    char *gateway = NULL;
-
-    f = fopen("/proc/net/route", "r");
-
-    while (fgets(line, 100, f)) {
-        iface = strtok_r(line, " \t", &end);
-        dest = strtok_r(NULL, " \t", &end);
-        gw = strtok_r(NULL, " \t", &end);
-
-        if (iface!=NULL && dest!=NULL && strcmp(dest,"00000000")==0) {
-            if (gw) {
-                char *pEnd;
-                // Convert gw to an int
-                int ng = strtol(gw, &pEnd, 16);
-                // Convert the gw bits to dotted-decimal notation
-                struct in_addr addr;
-                addr.s_addr = ng;
-                gateway = inet_ntoa(addr);
-            }
-            break;
-        }
-    }
-
-    fclose(f);
-    return gateway;
-}
-
-
 void attempt_ssh(char *host) {
-    char *gateway = get_default_gateway();
-    printf("default gateway: %s\n", gateway);
     // Execute the ssh command
     execl("/usr/bin/ssh", "ssh", host, (char*)NULL);
 }
