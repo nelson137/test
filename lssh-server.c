@@ -37,7 +37,7 @@ char *get_cwd(void) {
 }
 
 
-char *path_join(char *first, char* delim, char *second) {
+char *join_strings(char *first, char* delim, char *second) {
     int size = strlen(first) + strlen(delim) + strlen(second) + 1;
     char *joined = malloc(sizeof(char) * size);
     sprintf(joined, "%s%s%s", first, delim, second);
@@ -102,11 +102,11 @@ void setup(void) {
     if (CWD == NULL)
         err("Could not get current working directory\n", 1);
 
-    CONF_FN = path_join(CWD, "/", "connections.json");
+    CONF_FN = join_strings(CWD, "/", "connections.json");
     if (CONF_FN == NULL)
         err("Could not get path of conf file\n", 1);
 
-    CONF_LOCK_FN = path_join(CONF_FN, ".", "lock");
+    CONF_LOCK_FN = join_strings(CONF_FN, ".", "lock");
     if (CONF_LOCK_FN == NULL)
         err("Could not get path of conf lock file\n", 1);
 }
