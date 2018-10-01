@@ -149,7 +149,7 @@ int main(void) {
     // Listen for messages
     socklen_t cliLen;
     char msg[MAX_MSG_LEN];
-    while(1) {
+    while (1) {
         // Initialize buffer
         memset(msg, 0x0, MAX_MSG_LEN);
 
@@ -167,6 +167,7 @@ int main(void) {
         // Log received message
         char *ip = inet_ntoa(clientAddr.sin_addr);
         logger("INFO", "%s new internal ip: %s\n", msg, ip);
+        // Update the config file
         update_conf(msg, "internal_ip", ip);
     }
 
